@@ -18,6 +18,9 @@ class App {
         this.$modal = document.querySelector('.modal')
         this.$modalTitle = document.querySelector('.modal-title')
         this.$modalText = document.querySelector('.modal-text')
+        this.$colorToolTip = document.querySelector('#color-tooltip')
+
+
 
         this.addEventListeners()
     }
@@ -27,6 +30,14 @@ class App {
             this.handleFormClick(event)
             this.selectNote(event)
             this.openModal(event)
+        })
+
+        document.body.addEventListener('mouseover', event => {
+            this.openToolTip(event)
+        })
+
+        document.body.addEventListener('mouseout', event => {
+            this.closeToolTip(event)
         })
 
         this.$form.addEventListener('submit', event => {
@@ -48,6 +59,13 @@ class App {
 
         this.$modalCloseButton.addEventListener('click', event => {
             this.closeModal(event)
+        })
+
+        this.$colorToolTip.addEventListener('mouseover', function (){
+            this.style.display = 'flex'
+        })
+        this.$colorToolTip.addEventListener('mouseout', function (){
+            this.style.display = 'none'
         })
     }
 
@@ -90,6 +108,21 @@ class App {
     closeModal(event) {
         this.editNote()
         this.$modal.classList.toggle('open-modal')
+    }
+
+    openToolTip(event){
+        if(!event.target.matches('.toolbar-color')) return
+        this.id = event.target.nextElementSibling.dataset.id
+        const noteCoords = event.target.getBoundingClientRect()
+        const horizontal = noteCoords.left
+        const vertical = window.scrollY - 135
+        this.$colorToolTip.style.transform = `translate(${horizontal}px, ${vertical}px)`
+        this.$colorToolTip.style.display = 'flex'
+    }
+
+    closeToolTip(event){
+        if(!event.target.matches('.toolbar-color')) {return}
+        this.$colorToolTip.style.display = 'none'
     }
 
     addNote({title, text }){
