@@ -67,6 +67,13 @@ class App {
         this.$colorToolTip.addEventListener('mouseout', function (){
             this.style.display = 'none'
         })
+
+        this.$colorToolTip.addEventListener('click', event => {
+            const color = event.target.dataset.color
+            if(color){
+                this.editNoteColor(color)
+            }
+        })
     }
 
     handleFormClick(event) {
@@ -112,10 +119,10 @@ class App {
 
     openToolTip(event){
         if(!event.target.matches('.toolbar-color')) return
-        this.id = event.target.nextElementSibling.dataset.id
+        this.id = event.target.dataset.id
         const noteCoords = event.target.getBoundingClientRect()
         const horizontal = noteCoords.left
-        const vertical = window.scrollY - 135
+        const vertical = window.scrollY - 139
         this.$colorToolTip.style.transform = `translate(${horizontal}px, ${vertical}px)`
         this.$colorToolTip.style.display = 'flex'
     }
@@ -137,12 +144,20 @@ class App {
         this.closeForm()
     }
 
+    
     editNote(){
         const title = this.$modalTitle.value
         const text = this.$modalText.value
         this.notes = this.notes.map(note =>
             note.id === Number(this.id) ? {...note, title, text } : note
-        )
+            );
+        this.displayNotes()
+    }
+        
+    editNoteColor(color){
+        this.notes = this.notes.map(note => 
+            note.id === Number(this.id) ? {...note, color } : note
+        );
         this.displayNotes()
     }
 
@@ -166,7 +181,7 @@ class App {
                 <div class="note-text">${note.text}</div>
                 <div class="toolbar-container">
                     <div class="toolbar">
-                        <span class="material-symbols-outlined toolbar-color">pan_tool_alt</span>
+                        <span class="material-symbols-outlined toolbar-color" data-id=${note.id}>pan_tool_alt</span>
                         <span class="material-symbols-outlined toolbar-delete">delete</span>
                     </div>
                 </div>
